@@ -1,43 +1,54 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
-
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { rhythm, scale } from "../utils/typography"
+import Img from "gatsby-image"
+import { rhythm } from "../utils/typography"
+import { BLOCKS, MARKS } from "@contentful/rich-text-types"
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 
-const BlogPostTemplate = ({ data, pageContext, location }) => {
-  const post = data.markdownRemark
+const Bold = ({ children }) => <span className="bold">{children}</span>
+const Text = ({ children }) => <p className="align-center">{children}</p>
+
+const options = {
+  renderMark: {
+    [MARKS.BOLD]: text => <Bold>{text}</Bold>,
+  },
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (node, children) => <Text>{children}</Text>,
+  },
+}
+
+const ContentfulBlog = ({ data, pageContext, location }) => {
+  const post = data.contentfulGatsbyTest
   const siteTitle = data.site.siteMetadata.title
   const { previous, next } = pageContext
-
+  console.log(post.childContentfulGatsbyTestContentRichTextNode.json.content)
+  const Remark = documentToReactComponents(
+    {
+      nodeType: "document",
+      content: post.childContentfulGatsbyTestContentRichTextNode.json.content,
+    },
+    options
+  )
+  console.log(Remark, "remark")
   return (
     <Layout location={location} title={siteTitle}>
-      <SEO
-        title={post.frontmatter.title}
-        description={post.frontmatter.description || post.excerpt}
-      />
+      <SEO title={post.title} description={post.subtitle || post.excerpt} />
       <article>
         <header>
+          <Img fluid={post.image.fluid} />
           <h1
             style={{
               marginTop: rhythm(1),
               marginBottom: 0,
             }}
           >
-            {post.frontmatter.title}
+            {post.title}
           </h1>
-          <p
-            style={{
-              ...scale(-1 / 5),
-              display: `block`,
-              marginBottom: rhythm(1),
-            }}
-          >
-            {post.frontmatter.date}
-          </p>
         </header>
-        <section dangerouslySetInnerHTML={{ __html: post.html }} />
+        <section>{Remark}</section>
         <hr
           style={{
             marginBottom: rhythm(1),
@@ -60,15 +71,15 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.fields.slug} rel="prev">
-                ← {previous.frontmatter.title}
+              <Link to={previous.slug} rel="prev">
+                ←← {previous.title}
               </Link>
             )}
           </li>
           <li>
             {next && (
-              <Link to={next.fields.slug} rel="next">
-                {next.frontmatter.title} →
+              <Link to={next.slug} rel="next">
+                {next.title} →→
               </Link>
             )}
           </li>
@@ -78,7 +89,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
   )
 }
 
-export default BlogPostTemplate
+export default ContentfulBlog
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
@@ -87,15 +98,38 @@ export const pageQuery = graphql`
         title
       }
     }
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      id
-      excerpt(pruneLength: 160)
-      html
-      frontmatter {
-        title
-        date(formatString: "MMMM DD, YYYY")
-        description
+
+    contentfulGatsbyTest(slug: { eq: $slug }) {
+      childContentfulGatsbyTestContentRichTextNode {
+        json
+      }
+    }
+    contentfulGatsbyTest(slug: { eq: $slug }) {
+      title
+      author
+      subtitle
+      content {
+        content
+      }
+      image {
+        fluid {
+          ...GatsbyContentfulFluid
+        }
       }
     }
   }
 `
+
+// contentfulGatsbyTest(slug: { eq: $slug }) {
+//   title
+//   author
+//   subtitle
+//   content {
+//     content
+//   }
+//   image {
+//     fluid {
+//       ...GatsbyContentfulFluid
+//     }
+//   }
+// }
