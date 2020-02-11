@@ -119,17 +119,3 @@ export const pageQuery = graphql`
     }
   }
 `
-
-// contentfulGatsbyTest(slug: { eq: $slug }) {
-//   title
-//   author
-//   subtitle
-//   content {
-//     content
-//   }
-//   image {
-//     fluid {
-//       ...GatsbyContentfulFluid
-//     }
-//   }
-// }
