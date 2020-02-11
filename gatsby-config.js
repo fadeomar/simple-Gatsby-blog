@@ -59,19 +59,7 @@ module.exports = {
         //trackingId: `ADD YOUR TRACKING ID HERE`,
       },
     },
-    `gatsby-plugin-feed`,
-    {
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
-        start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#663399`,
-        display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`,
-      },
-    },
+
     `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-plugin-typography`,
@@ -86,7 +74,8 @@ module.exports = {
       resolve: "gatsby-source-contentful",
       options: {
         spaceId: "ar7xv7xunhh1",
-        accessToken: process.env.TOKEN,
+        accessToken: "Cn11zlnOwO71jrSi5X_CQBWt8uEQRKntikvbuXxuCYg",
+        // accessToken: process.env.TOKEN,
       },
     },
   ],
